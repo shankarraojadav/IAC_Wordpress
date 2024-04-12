@@ -1,5 +1,5 @@
 # Creating Security Group for ELB
-resource "aws_security_group" "word-sg" {
+resource "aws_security_group" "word_sg" {
   name        = "Demo Security Group"
   description = "Demo Module"
   vpc_id      = aws_vpc.main.id
@@ -10,13 +10,13 @@ resource "aws_security_group" "word-sg" {
     to_port     = 80
     protocol    = "tcp"
     cidr_blocks = ["0.0.0.0/0"]
-  }  
+  }
   ingress {
     from_port   = 443
     to_port     = 443
     protocol    = "tcp"
     cidr_blocks = ["0.0.0.0/0"]
-  }  
+  }
 
   ingress {
     from_port   = 22
@@ -24,7 +24,7 @@ resource "aws_security_group" "word-sg" {
     protocol    = "tcp"
     cidr_blocks = ["0.0.0.0/0"]
   }
- 
+
   egress {
     from_port   = 0
     to_port     = 0
@@ -40,16 +40,15 @@ resource "aws_security_group" "word-sg" {
 
 resource "aws_elb" "web_elb" {
   name               = "foobar-terraform-elb"
-  availability_zones = data.aws_availability_zones.aws_zones.names
- 
- security_groups = [aws.security_group.word-sg.id]
-  
+  subnets = [aws_subnet.private.id, aws_subnet.public.id]
+
+ security_groups = [aws_security_group.word_sg.id]
+
   listener {
     instance_port      = 8000
     instance_protocol  = "http"
     lb_port            = 443
-    lb_protocol        = "https"
-    ssl_certificate_id = "arn:aws:iam::123456789012:server-certificate/certName"
+    lb_protocol        = "http"
   }
 
   health_check {

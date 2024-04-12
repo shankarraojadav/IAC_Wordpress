@@ -1,5 +1,5 @@
 resource "aws_autoscaling_group" "aws_asg" {
-  availability_zones  = data.aws_availability_zones.aws_zones.names
+
   desired_capacity    = 1
   max_size            = 1
   min_size            = 1
@@ -7,7 +7,7 @@ resource "aws_autoscaling_group" "aws_asg" {
 
   health_check_type = "ELB"
 
-  load_balancers = aws_elb.web_elb.id
+  load_balancers = [aws_elb.web_elb.id]
 
   launch_template {
     id      = aws_launch_template.wordpress.id
@@ -69,11 +69,11 @@ resource "aws_cloudwatch_metric_alarm" "web_cpu_alarm_down" {
   period = "120"
   statistic = "Average"
   threshold = "30"
-  
+
   dimensions = {
     AutoScalingGroupName = aws_autoscaling_group.aws_asg.name
   }
-  
+
   alarm_description = "This metric monitor EC2 instance CPU utilization"
   alarm_actions = [ "${aws_autoscaling_policy.web_policy_down.arn}" ]
 }
