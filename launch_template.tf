@@ -1,3 +1,4 @@
+
 resource "aws_launch_template" "wordpress" {
   name_prefix = "wordpress"
   image_id = data.aws_ami.ubuntu.image_id
@@ -9,6 +10,7 @@ resource "aws_launch_template" "wordpress" {
     db_password = aws_db_instance.wordpress_db.password
   }))
 
+  depends_on = [aws_db_instance.wordpress_db]
 
  block_device_mappings {
     device_name = "/dev/sda1"  # Device name for the root volume
@@ -33,7 +35,54 @@ resource "aws_launch_template" "wordpress" {
   network_interfaces {
     device_index              = 0
     subnet_id                 = aws_subnet.public.id
-    security_groups           = [aws_security_group.web_server.id]
+    security_groups           = [aws_security_group.SG_for_EC2.id]
     associate_public_ip_address = true
+  }
+}
+
+
+
+resource "aws_security_group" "SG_for_EC2" {
+  name        = "SG_for_EC2"
+  description = "Allow 80, 443, 22 port inbound traffic"
+  vpc_id      = aws_vpc.main.id
+
+  ingress {
+    description = "TLS from anywhere"
+    from_port   = 443
+    to_port     = 443
+    protocol    = "tcp"
+    cidr_blocks = ["0.0.0.0/0"]
+  }
+
+  ingress {
+    description = "HTTP from anywhere"
+    from_port   = 80
+    to_port     = 80
+    protocol    = "tcp"
+    cidr_blocks = ["0.0.0.0/0"]
+  }
+
+  ingress {
+    description = "SSH from my IP"
+    from_port   = 22
+    to_port     = 22
+    protocol    = "tcp"
+    cidr_blocks = ["0.0.0.0/0"]
+  }
+
+    ingress {
+    description = "Custom port 8000"
+    from_port   = 8000
+    to_port     = 8000
+    protocol    = "tcp"
+    cidr_blocks = ["0.0.0.0/0"]
+  }
+
+  egress {
+    from_port   = 0
+    to_port     = 0
+    protocol    = "-1"
+    cidr_blocks = ["0.0.0.0/0"]
   }
 }

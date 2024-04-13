@@ -1,4 +1,4 @@
-# Creating Security Group for ELB
+
 resource "aws_security_group" "word_sg" {
   name        = "Demo Security Group"
   description = "Demo Module"
@@ -67,4 +67,3 @@ resource "aws_elb" "web_elb" {
     Name = "wordpress-terraform-elb"
   }
 }
-

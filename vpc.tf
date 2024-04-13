@@ -29,7 +29,6 @@ resource "aws_subnet" "private" {
 resource "aws_security_group" "web_server" {
   name = "web_server-sg"
   description = "Security group for web servers"
-
   vpc_id = aws_vpc.main.id
 
   # HTTP access from anywhere
@@ -50,7 +49,7 @@ resource "aws_security_group" "web_server" {
     from_port   = 3306
     to_port     = 3306
     protocol    = "tcp"
-
+    security_groups = [aws_security_group.SG_for_RDS.id]
   }
 
 
@@ -103,3 +102,4 @@ resource "aws_route_table_association" "rt2" {
     subnet_id = aws_subnet.private.id
     route_table_id = aws_route_table.route.id
 }
+
