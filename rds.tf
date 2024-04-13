@@ -8,5 +8,6 @@ resource "aws_db_instance" "wordpress_db" {
   password             = "foobarbaz"
   parameter_group_name = "default.mysql5.7"
   skip_final_snapshot  = true
-  vpc_security_group_ids = [aws_security_group.web_server.id]
+
 }
+

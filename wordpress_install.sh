@@ -25,9 +25,10 @@ sudo chown -R www-data:www-data /var/www/html/wordpress
 
 # Configure WordPress
 sudo mv /var/www/html/wordpress/wp-config-sample.php /var/www/html/wordpress/wp-config.php
-sudo sed -i 's/database_name_here/your_database_name/g' /var/www/html/wordpress/wp-config.php
-sudo sed -i 's/username_here/your_database_username/g' /var/www/html/wordpress/wp-config.php
-sudo sed -i 's/password_here/your_database_password/g' /var/www/html/wordpress/wp-config.php
+sudo sed -i "s/database_name_here/${db_name}/g" /var/www/html/wordpress/wp-config.php
+sudo sed -i "s/username_here/${db_username}/g" /var/www/html/wordpress/wp-config.php
+sudo sed -i "s/password_here/${db_password}/g" /var/www/html/wordpress/wp-config.php
+
 
 # Restart Apache
 sudo systemctl restart apache2

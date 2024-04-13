@@ -103,4 +103,3 @@ resource "aws_route_table_association" "rt2" {
     subnet_id = aws_subnet.private.id
     route_table_id = aws_route_table.route.id
 }
-
