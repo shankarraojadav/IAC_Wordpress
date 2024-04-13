@@ -4,51 +4,47 @@ resource "aws_security_group" "word_sg" {
   description = "Demo Module"
   vpc_id      = aws_vpc.main.id
 
-  # HTTP access from anywhere
+  # HTTP access from anywhere (Consider restricting for better security)
   ingress {
-    from_port   = 80
-    to_port     = 80
-    protocol    = "tcp"
+    from_port  = 80
+    to_port    = 80
+    protocol   = "tcp"
     cidr_blocks = ["0.0.0.0/0"]
   }
   ingress {
-    from_port   = 443
-    to_port     = 443
-    protocol    = "tcp"
+    from_port  = 443
+    to_port    = 443
+    protocol   = "tcp"
     cidr_blocks = ["0.0.0.0/0"]
   }
 
+  # SSH access from anywhere (Consider restricting for better security)
   ingress {
-    from_port   = 22
-    to_port     = 22
-    protocol    = "tcp"
+    from_port  = 22
+    to_port    = 22
+    protocol   = "tcp"
     cidr_blocks = ["0.0.0.0/0"]
   }
 
   egress {
-    from_port   = 0
-    to_port     = 0
-    protocol    = "-1"
+    from_port  = 0
+    to_port    = 0
+    protocol   = "-1"
     cidr_blocks = ["0.0.0.0/0"]
   }
 }
 
-
-
 # Create a new load balancer
-
-
 resource "aws_elb" "web_elb" {
-  name               = "foobar-terraform-elb"
-  subnets = [aws_subnet.private.id, aws_subnet.public.id]
-
- security_groups = [aws_security_group.word_sg.id]
+  name        = "foobar-terraform-elb"
+  subnets     = [aws_subnet.private.id, aws_subnet.public.id]
+  security_groups = [aws_security_group.word_sg.id]
 
   listener {
-    instance_port      = 8000
-    instance_protocol  = "http"
-    lb_port            = 443
-    lb_protocol        = "http"
+    instance_port  = 8000
+    instance_protocol = "http"
+    lb_port        = 443
+    lb_protocol    = "http"
   }
 
   health_check {
@@ -59,13 +55,16 @@ resource "aws_elb" "web_elb" {
     interval            = 30
   }
 
-#   instances                   = [aws_instance.foo.id]
-#   cross_zone_load_balancing   = true
-#   idle_timeout                = 400
-#   connection_draining         = true
-#   connection_draining_timeout = 400
+  # Use the Auto Scaling Group for instances (reference by name)
+  #instances = aws_autoscaling_group.aws_asg.name
+
+  cross_zone_load_balancing = true
+  idle_timeout              = 400
+  connection_draining       = true
+  connection_draining_timeout = 400
 
   tags = {
     Name = "wordpress-terraform-elb"
   }
 }
+

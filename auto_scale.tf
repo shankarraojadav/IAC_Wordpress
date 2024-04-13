@@ -1,8 +1,8 @@
+# Auto Scaling Group
 resource "aws_autoscaling_group" "aws_asg" {
-
-  desired_capacity    = 1
-  max_size            = 1
-  min_size            = 1
+  desired_capacity  = 1
+  max_size          = 1
+  min_size          = 1
   vpc_zone_identifier = [aws_subnet.public.id, aws_subnet.private.id]
 
   health_check_type = "ELB"
@@ -10,29 +10,24 @@ resource "aws_autoscaling_group" "aws_asg" {
   load_balancers = [aws_elb.web_elb.id]
 
   launch_template {
-    id      = aws_launch_template.wordpress.id
+    id     = aws_launch_template.wordpress.id
     version = "$Latest"
   }
 
-  lifecycle {
-    create_before_destroy = true
-  }
 
   tag {
-    key                 = "Name"
-    value               = "wordpress"
+    key               = "Name"
+    value             = "wordpress"
     propagate_at_launch = true
   }
 }
 
-
-# aws auto scaling poilicy
-
+# Auto Scaling Policy (simple example for scaling up)
 resource "aws_autoscaling_policy" "web_policy_up" {
-  name = "web_policy_up"
+  name               = "web_policy_up"
   scaling_adjustment = 1
-  adjustment_type = "ChangeInCapacity"
-  cooldown = 300
+  adjustment_type   = "ChangeInCapacity"
+  cooldown           = 300
   autoscaling_group_name = aws_autoscaling_group.aws_asg.name
 }
 

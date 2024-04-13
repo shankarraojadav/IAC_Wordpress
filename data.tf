@@ -4,8 +4,18 @@ data "aws_availability_zones" "aws_zones" {
 
 # aws_ami
 
-data "aws_ami" "wordpress_ami" {
+data "aws_ami" "ubuntu" {
+  most_recent = true
 
-  most_recent      = true
+  filter {
+    name   = "name"
+    values = ["ubuntu/images/hvm-ssd/ubuntu-focal-20.04-amd64-server-*"]
+  }
 
+  filter {
+    name   = "virtualization-type"
+    values = ["hvm"]
+  }
+
+  owners = ["099720109477"]  # Canonical
 }
